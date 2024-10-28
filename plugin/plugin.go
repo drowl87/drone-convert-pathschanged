@@ -10,7 +10,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/meltwater/drone-convert-pathschanged/providers"
+	"github.com/drowl87/drone-convert-pathschanged/providers"
 
 	"github.com/drone/drone-go/drone"
 	"github.com/drone/drone-go/plugin/converter"
@@ -26,6 +26,7 @@ type (
 		BitBucketPassword string
 		GithubServer      string
 		StashServer       string
+		GiteaServer       string
 		Token             string
 	}
 
@@ -167,6 +168,11 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 			}
 		case "stash":
 			changedFiles, err = providers.GetStashFilesChanged(req.Repo, req.Build, p.params.StashServer, p.params.Token, scm.ListOptions{})
+			if err != nil {
+				return nil, err
+			}
+		case "gitea":
+			changedFiles, err = providers.GetGiteaFilesChanged(req.Repo, req.Build, p.params.GiteaServer, p.params.Token, scm.ListOptions{})
 			if err != nil {
 				return nil, err
 			}

@@ -1,4 +1,4 @@
-module github.com/meltwater/drone-convert-pathschanged
+module github.com/drowl87/drone-convert-pathschanged
 
 go 1.15
 

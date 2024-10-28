@@ -10,7 +10,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/meltwater/drone-convert-pathschanged/plugin"
+	"github.com/drowl87/drone-convert-pathschanged/plugin"
 
 	"github.com/drone/drone-go/plugin/converter"
 	"github.com/joho/godotenv"
@@ -36,6 +36,7 @@ type (
 		BitBucketPassword string `envconfig:"BITBUCKET_PASSWORD"`
 		GithubServer      string `envconfig:"GITHUB_SERVER"`
 		StashServer       string `envconfig:"STASH_SERVER"`
+		GiteaServer       string `envconfig:"GITEA_SERVER"`
 	}
 )
 
@@ -62,6 +63,7 @@ func validate(spec *spec) error {
 			"github",
 			"stash",
 			"gitee",
+			"gitea",
 		}
 		if !contains(providers, spec.Provider) {
 			return fmt.Errorf("unsupported provider")
@@ -88,7 +90,9 @@ func validate(spec *spec) error {
 	if spec.StashServer == "" && spec.Provider == "stash" {
 		return fmt.Errorf("missing stash server")
 	}
-
+	if spec.GiteaServer == "" && spec.Provider == "gitea" {
+		return fmt.Errorf("missing gitea server")
+	}
 	if spec.Token == "" && spec.Provider == "gitee" {
 		return fmt.Errorf("missing gitee token")
 	}
@@ -132,6 +136,7 @@ func main() {
 		GithubServer:      spec.GithubServer,
 		Token:             spec.Token,
 		StashServer:       spec.StashServer,
+		GiteaServer:       spec.GiteaServer,
 	}
 
 	handler := converter.Handler(
